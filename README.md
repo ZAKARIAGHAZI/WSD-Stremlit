@@ -140,8 +140,8 @@ The training notebook also generates `data/` and `evaluation/` folders in its Ka
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/<your-repository>.git
-cd <your-repository>
+git clone https://github.com/ZAKARIAGHAZI/NLP_WSD.git
+cd NLP_WSD
 ```
 
 Replace the placeholders with the actual GitHub repository URL.
