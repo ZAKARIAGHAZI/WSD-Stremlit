@@ -47,5 +47,4 @@ dist/
 *.pt
 *.pth
 
-# Keep model artifacts excluded if not using Git LFS
-# artifacts/
+artifacts/
