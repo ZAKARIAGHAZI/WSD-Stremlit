@@ -22,7 +22,8 @@ This project predicts a WordNet synset for a selected target word and retrieves 
 - WordNet-based fallback when the target lemma/POS was not seen during training.
 - Evaluation with accuracy, precision, recall, F1-scores, and semantic confusion analysis.
 - Interactive interface developed with **Streamlit**.
-- Saved model artifacts for inference without retraining.
+- Saved model artifacts for inference without retraining, once generated locally.
+- Trained artifacts are intentionally excluded from GitHub to keep the repository lightweight.
 
 ## Technologies
 
@@ -112,9 +113,13 @@ Verbs and rare or unseen senses remain more difficult to classify. Results depen
 
 ## Project Structure
 
+The repository contains the application, notebook, and documentation. **The trained `artifacts/` directory is local-only and is ignored by Git.**
+
+
 ```text
 WSD-Stremlit/
-├── artifacts/
+├── .gitignore           # Excludes artifacts/ and venv/
+├── artifacts/           # LOCAL ONLY — not included in GitHub
 │   ├── encoder/
 │   │   ├── config.json
 │   │   └── model.safetensors
@@ -133,6 +138,8 @@ WSD-Stremlit/
 └── README.md
 ```
 
+**Note:** The `artifacts/` directory in this tree represents the expected *local* setup. It is not available after cloning the repository; you must restore or regenerate it before running the app.
+
 The training notebook also generates `data/` and `evaluation/` folders in its Kaggle output directory. These are not required to be present in the Streamlit project folder for inference.
 
 ## Installation and Usage
@@ -140,11 +147,10 @@ The training notebook also generates `data/` and `evaluation/` folders in its Ka
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/ZAKARIAGHAZI/NLP_WSD.git
-cd NLP_WSD
+git clone https://github.com/ZAKARIAGHAZI/WSD-Stremlit.git
+cd WSD-Stremlit
 ```
 
-Replace the placeholders with the actual GitHub repository URL.
 
 ### 2. Create a virtual environment
 
@@ -174,9 +180,18 @@ If the application requires NLTK WordNet resources, download them once:
 python -c "import nltk; nltk.download('wordnet'); nltk.download('omw-1.4')"
 ```
 
-### 4. Make sure the trained artifacts are available
+### 4. Prepare the trained model artifacts (required)
 
-Keep the entire `artifacts/` directory in the project root. The BERT weights, tokenizer, mapping files, configuration, and serialized classifiers must correspond to the **same training run**.
+**Model weights and trained classifiers are not hosted in this GitHub repository.** The `artifacts/` folder is excluded by the root `.gitignore` because it contains large generated files. Cloning the repository and installing the dependencies alone is **not enough** to run inference.
+
+Choose one of these approaches:
+
+1. **Already trained the model?** Copy your existing `artifacts/` directory from your own trusted backup or Kaggle training output into the repository root, next to `app.py`.
+2. **Need to regenerate the model?** Run `notebook/nlp-mini-project-wsd.ipynb` in Kaggle with a GPU, then download the generated `artifacts/` directory and place it in the repository root (see [Reproducing the Training](#reproducing-the-training)).
+
+The required files include `encoder/model.safetensors`, the encoder configuration, tokenizer files, `run_config.json`, `sense_mappings.json`, and `wsd_model.joblib`. All files must come from the **same training run**.
+
+Do **not** commit the generated artifacts. Your root `.gitignore` should contain `artifacts/` and `venv/`.
 
 > **Security note:** Only load `wsd_model.joblib` if it comes from a trusted source. Joblib deserialization can execute arbitrary code.
 
@@ -194,7 +209,7 @@ The notebook is located at `notebook/nlp-mini-project-wsd.ipynb` and was develop
 
 1. Open the notebook in Kaggle and enable GPU acceleration.
 2. Run the cells in order, including SemCor/WordNet download, preprocessing, BERT fine-tuning, classifier training, and evaluation.
-3. Retrieve the generated `artifacts/` directory from `/kaggle/working/wsd_simple/`.
+3. Retrieve the generated `artifacts/` directory from `/kaggle/working/wsd_simple/` (or the configured notebook output directory).
 4. Place that directory next to `app.py` to use the saved model in Streamlit.
 
 The notebook also writes datasets and embeddings under `data/`, and evaluation reports, confusion tables, and figures under `evaluation/`.
